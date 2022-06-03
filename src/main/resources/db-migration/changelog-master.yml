@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - include:
+      file: changes/initial-schema.yml
+      relativeToChangelogFile: true
+      context: prod
+  - include:
+      file: changes/dev-dataset.yml
+      relativeToChangelogFile: true
+      context: dev

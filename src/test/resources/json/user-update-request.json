@@ -1,0 +1,7 @@
+{
+  "password": "$PASSWORD",
+  "firstName": "$FIRST_NAME",
+  "lastName": "$LAST_NAME",
+  "countryCode": "$COUNTRY_CODE",
+  "city": "$CITY"
+}

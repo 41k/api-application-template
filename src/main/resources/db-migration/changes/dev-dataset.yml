@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: users
+      author: author
+      changes:
+        - sql:
+            sql: INSERT INTO users (id, email, password, first_name, last_name, country_code, city, active) VALUES
+              ('e8bbdf7f','user1@mail.com','$2a$10$yaOGVZeqqfD7xIrh2ezHE.6xVxr6UWm9SJ2A15l6o/w0nb6UFIzAS','First Name','Last Name','US','NEW-YORK',1),
+              ('67ace210','user2@mail.com','$2a$10$yaOGVZeqqfD7xIrh2ezHE.6xVxr6UWm9SJ2A15l6o/w0nb6UFIzAS','First Name','Last Name','US','NEW-YORK',1);

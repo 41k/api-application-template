@@ -4,7 +4,8 @@ import root.repository.UserRepository;
 import root.service.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import root.service.mapper.UserMapper;
+import root.service.UserMapper;
+import root.service.UserSpecificationBuilder;
 
 import java.time.Clock;
 
@@ -22,9 +23,15 @@ public class ApplicationConfiguration {
             UserRepository userRepository,
             UserMapper userMapper,
             SecurityService securityService,
-            MailService mailService
+            MailService mailService,
+            UserSpecificationBuilder specificationBuilder
     ) {
-        return new UserService(idGenerator, userRepository, userMapper, securityService, mailService);
+        return new UserService(idGenerator, userRepository, userMapper, securityService, mailService, specificationBuilder);
+    }
+
+    @Bean
+    public UserSpecificationBuilder userSpecificationBuilder() {
+        return new UserSpecificationBuilder();
     }
 
     @Bean

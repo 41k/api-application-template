@@ -4,11 +4,13 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.transaction.annotation.Transactional;
 import root.dto.*;
+import root.dto.search.PageableSearchResult;
+import root.dto.search.SearchContext;
 import root.model.User;
 import root.repository.UserRepository;
-import root.service.mapper.UserMapper;
 
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 @Transactional
 @RequiredArgsConstructor
@@ -19,7 +21,8 @@ public class UserService {
     private final UserMapper userMapper;
     private final SecurityService securityService;
     private final MailService mailService;
-    
+    private final UserSpecificationBuilder specificationBuilder;
+
     public void registerUser(UserRegistrationDto dto) {
         var normalizedEmail = normalize(dto.getEmail());
         var existingUser = userRepository.findByEmail(normalizedEmail);
@@ -91,6 +94,22 @@ public class UserService {
         var requesterId = securityService.getRequesterId();
         var user = getActiveUser(requesterId);
         userRepository.save(user.toBuilder().active(false).build());
+    }
+
+    public PageableSearchResult<UserDto> search(SearchContext searchContext) {
+        var specification = specificationBuilder.build(searchContext.getFilters());
+        var pageable = searchContext.getPageable();
+        var pageOfUsers = userRepository.findAll(specification, pageable);
+        var users = pageOfUsers.getContent().stream()
+                .map(userMapper::toDto)
+                .collect(Collectors.toList());
+        return PageableSearchResult.<UserDto>builder()
+                .start(searchContext.getStart())
+                .limit(searchContext.getLimit())
+                .totalPages(pageOfUsers.getTotalPages())
+                .totalElements(pageOfUsers.getTotalElements())
+                .data(users)
+                .build();
     }
 
     private User getActiveUser(String userId) {

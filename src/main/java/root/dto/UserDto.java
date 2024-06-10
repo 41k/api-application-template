@@ -1,15 +1,16 @@
 package root.dto;
 
 import lombok.Builder;
+import lombok.Data;
 import lombok.Value;
 
-@Value
+@Data
 @Builder
 public class UserDto {
-    String id;
-    String email;
-    String firstName;
-    String lastName;
-    String countryCode;
-    String city;
+    private String id;
+    private String email;
+    private String firstName;
+    private String lastName;
+    private String countryCode;
+    private String city;
 }

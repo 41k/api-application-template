@@ -1,9 +1,11 @@
 package root.service
 
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import root.dto.*
+import root.dto.search.SearchContext
 import root.model.User
 import root.repository.UserRepository
-import root.service.mapper.UserMapper
 import spock.lang.Specification
 
 import static root.util.UserDataFactory.*
@@ -27,7 +29,8 @@ class UserServiceTest extends Specification {
     private userMapper = Mock(UserMapper)
     private securityService = Mock(SecurityService)
     private mailService = Mock(MailService)
-    private userService = new UserService(idGenerator, userRepository, userMapper, securityService, mailService)
+    private specificationBuilder = Mock(UserSpecificationBuilder)
+    private userService = new UserService(idGenerator, userRepository, userMapper, securityService, mailService, specificationBuilder)
 
 
     // --- User registration
@@ -354,5 +357,49 @@ class UserServiceTest extends Specification {
         and:
         def exception = thrown(IllegalArgumentException)
         exception.message == 'Wrong user id'
+    }
+
+
+    // --- User's search
+
+    def 'should search for users'() {
+        given:
+        def searchContext = Mock(SearchContext)
+        def filters = Mock(Collection)
+        def pageable = Mock(Pageable)
+        def pageOfUsers = Mock(Page)
+        def userId = 'u1'
+        def user = User.builder().id(userId).build()
+        def userDto = UserDto.builder().id(userId).build()
+        def start = 4
+        def pageSize = 3
+        def totalPages = 1
+        def totalElements = 10L
+        def specification = Mock(org.springframework.data.jpa.domain.Specification)
+
+        and:
+        1 * searchContext.getStart() >> start
+        1 * searchContext.getLimit() >> pageSize
+        1 * searchContext.getFilters() >> filters
+        1 * searchContext.getPageable() >> pageable
+        1 * pageOfUsers.getTotalPages() >> totalPages
+        1 * pageOfUsers.getTotalElements() >> totalElements
+        1 * pageOfUsers.getContent() >> [user]
+        1 * specificationBuilder.build(filters) >> specification
+        1 * userRepository.findAll(specification, pageable) >> pageOfUsers
+        1 * userMapper.toDto(user) >> userDto
+        0 * _
+
+        when:
+        def searchResult = userService.search(searchContext)
+
+        then:
+        searchResult.start == start
+        searchResult.limit == pageSize
+        searchResult.totalPages == totalPages
+        searchResult.totalElements == totalElements
+
+        and:
+        searchResult.data[0] == userDto
     }
 }

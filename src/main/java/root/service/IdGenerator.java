@@ -40,7 +40,7 @@ public class IdGenerator {
     @SneakyThrows
     private BlockingQueue<String> generateIds() {
         var queueOfIds = new ArrayBlockingQueue<String>(NUMBER_OF_IDS);
-        for (var i = 0; i < NUMBER_OF_IDS; i++) {
+        for (int i = 0; i < NUMBER_OF_IDS; i++) {
             queueOfIds.put(newId());
         }
         return queueOfIds;

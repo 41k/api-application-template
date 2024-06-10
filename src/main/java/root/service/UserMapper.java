@@ -1,4 +1,4 @@
-package root.service.mapper;
+package root.service;
 
 import org.mapstruct.Mapper;
 import root.dto.UserDto;

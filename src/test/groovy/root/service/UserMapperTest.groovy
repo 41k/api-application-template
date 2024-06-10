@@ -1,4 +1,4 @@
-package root.service.mapper
+package root.service
 
 import spock.lang.Specification
 
